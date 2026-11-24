@@ -1,0 +1,6 @@
+bank_id,file,account_name
+gulfview,gulfview_checking.csv,Gulfview CU Checking
+coquina,coquina_savings.csv,Coquina Savings
+harborline,harborline_visa.csv,Harborline Visa
+palmetto,palmetto_mastercard.csv,Palmetto Mastercard
+sunpine,sunpine_debit.csv,Sunpine Debit

@@ -1,0 +1,41 @@
+{
+  "bank": "Tarpon Trust (FICTIONAL)",
+  "currency": "USD",
+  "transactions": [
+    {
+      "posted": "20270302",
+      "memo": "SUNFRESH MARKET #88",
+      "amount": "-47.15"
+    },
+    {
+      "posted": "20270306",
+      "memo": "TACO TIDE",
+      "amount": "-19.40"
+    },
+    {
+      "posted": "20270310",
+      "memo": "SUNCOAST FUEL #3",
+      "amount": "-41.02"
+    },
+    {
+      "posted": "20270314",
+      "memo": "FREELANCE INVOICE 1031",
+      "amount": "480.00"
+    },
+    {
+      "posted": "20270319",
+      "memo": "STREAMBOX MONTHLY",
+      "amount": "-15.99"
+    },
+    {
+      "posted": "20270323",
+      "memo": "HILLTOP HARDWARE",
+      "amount": "-33.80"
+    },
+    {
+      "posted": "20270329",
+      "memo": "CORAL PHARMACY",
+      "amount": "-12.60"
+    }
+  ]
+}

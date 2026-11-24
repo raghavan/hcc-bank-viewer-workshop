@@ -1,0 +1,68 @@
+{
+ "note": "Answer key for the bonus bank (week 5).",
+ "rows": [
+  {
+   "id": "tarpon-1",
+   "date": "2027-03-02",
+   "account": "Tarpon Trust Checking",
+   "description": "SUNFRESH MARKET #88",
+   "amount_cents": -4715,
+   "category": "Groceries",
+   "is_transfer": false
+  },
+  {
+   "id": "tarpon-2",
+   "date": "2027-03-06",
+   "account": "Tarpon Trust Checking",
+   "description": "TACO TIDE",
+   "amount_cents": -1940,
+   "category": "Dining",
+   "is_transfer": false
+  },
+  {
+   "id": "tarpon-3",
+   "date": "2027-03-10",
+   "account": "Tarpon Trust Checking",
+   "description": "SUNCOAST FUEL #3",
+   "amount_cents": -4102,
+   "category": "Transport",
+   "is_transfer": false
+  },
+  {
+   "id": "tarpon-4",
+   "date": "2027-03-14",
+   "account": "Tarpon Trust Checking",
+   "description": "FREELANCE INVOICE 1031",
+   "amount_cents": 48000,
+   "category": "Income",
+   "is_transfer": false
+  },
+  {
+   "id": "tarpon-5",
+   "date": "2027-03-19",
+   "account": "Tarpon Trust Checking",
+   "description": "STREAMBOX MONTHLY",
+   "amount_cents": -1599,
+   "category": "Subscriptions",
+   "is_transfer": false
+  },
+  {
+   "id": "tarpon-6",
+   "date": "2027-03-23",
+   "account": "Tarpon Trust Checking",
+   "description": "HILLTOP HARDWARE",
+   "amount_cents": -3380,
+   "category": "Shopping",
+   "is_transfer": false
+  },
+  {
+   "id": "tarpon-7",
+   "date": "2027-03-29",
+   "account": "Tarpon Trust Checking",
+   "description": "CORAL PHARMACY",
+   "amount_cents": -1260,
+   "category": "Health",
+   "is_transfer": false
+  }
+ ]
+}

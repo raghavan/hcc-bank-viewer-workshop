@@ -1,0 +1,9 @@
+/* A plain start. Make it yours. The mockups in docs/mockups/ show one look. */
+body { margin: 0; font: 15px/1.45 system-ui, sans-serif; color: #1c2230; background: #f2f3f5; }
+.titlebar { background: #1f2633; color: #fff; text-align: center; padding: 12px; font-weight: 600; }
+.tabs { display: flex; gap: 8px; padding: 12px 24px; background: #fff; border-bottom: 1px solid #e3e6ec; }
+.tabs button { font: inherit; padding: 6px 14px; border: 1px solid #e3e6ec; border-radius: 8px; background: #fff; cursor: pointer; }
+main { padding: 20px 24px 60px; }
+table { width: 100%; border-collapse: collapse; background: #fff; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #e3e6ec; }
+.sample { position: fixed; bottom: 8px; left: 16px; margin: 0; background: #fdf3c7; padding: 3px 12px; border-radius: 999px; font-size: 14px; }

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "hcc-bank-viewer/transactions-1.0",
+  "title": "Normalized transactions file",
+  "description": "What every structurer writes, in any language. See contract/CONTRACT.md for the plain English version.",
+  "type": "object",
+  "required": ["schema_version", "transactions"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "generated_at": {"type": "string"},
+    "generator": {"type": "string"},
+    "transactions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/transaction"}
+    }
+  },
+  "$defs": {
+    "category": {
+      "enum": ["Income", "Housing", "Groceries", "Dining", "Shopping", "Transport", "Utilities", "Health", "Subscriptions", "Other", "Transfer"]
+    },
+    "transaction": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "date", "account", "description", "amount_cents", "category", "category_source", "rule_id", "confidence", "needs_review", "is_transfer"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z]+-[1-9][0-9]*$"},
+        "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "account": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "amount_cents": {"type": "integer"},
+        "category": {"anyOf": [{"$ref": "#/$defs/category"}, {"type": "null"}]},
+        "category_source": {"enum": ["rule", "transfer", "ai", "ai_approved", "manual", "none"]},
+        "rule_id": {"type": ["string", "null"]},
+        "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "needs_review": {"type": "boolean"},
+        "is_transfer": {"type": "boolean"},
+        "ai_reason": {"type": "string"}
+      }
+    }
+  }
+}

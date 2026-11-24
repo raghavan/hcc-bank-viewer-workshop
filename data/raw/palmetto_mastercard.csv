@@ -1,0 +1,58 @@
+Palmetto Card Services - Account Activity (FICTIONAL SAMPLE)
+Account ending 0000,Exported for workshop use
+
+Date,Merchant,Type,Amount
+10/3/26,Cloudlocker Storage,SALE,2.99
+10/9/26,Threadline Apparel,SALE,53.88
+10/10/26,Megamart #33,SALE,73.07
+10/12/26,Booknook Online,SALE,35.59
+10/12/26,Streambox Monthly,SALE,15.99
+10/14/26,Pizza Orbit,SALE,20.79
+10/15/26,Megamart #33,SALE,39.87
+10/24/26,Payment,PAYMENT,642.18
+11/2/26,Megamart #33,SALE,36.50
+11/2/26,Threadline Apparel,SALE,37.78
+11/2/26,Pizza Orbit,SALE,28.68
+11/3/26,Cloudlocker Storage,SALE,2.99
+11/6/26,Booknook Online,SALE,21.44
+11/12/26,Streambox Monthly,SALE,15.99
+11/19/26,Megamart #33,SALE,80.60
+11/22/26,Booknook Online Refund,RETURN,24.99
+11/24/26,Payment,PAYMENT,242.18
+12/2/26,Threadline Apparel,SALE,57.89
+12/3/26,Cloudlocker Storage,SALE,2.99
+12/7/26,Pizza Orbit,SALE,20.56
+12/8/26,Threadline Apparel,SALE,80.06
+12/9/26,Megamart #33,SALE,75.19
+12/12/26,Streambox Monthly,SALE,15.99
+12/13/26,Megamart #33,SALE,113.53
+12/19/26,City Parking Garage 3,SALE,14.00
+12/22/26,Booknook Online,SALE,26.59
+12/24/26,Payment,PAYMENT,198.99
+12/25/26,Threadline Apparel,SALE,69.21
+1/3/27,Cloudlocker Storage,SALE,2.99
+1/6/27,Megamart #33,SALE,41.18
+1/6/27,Pizza Orbit,SALE,29.90
+1/8/27,Megamart #33,SALE,33.12
+1/12/27,Booknook Online,SALE,35.99
+1/12/27,Streambox Monthly,SALE,15.99
+1/14/27,Threadline Apparel,SALE,72.56
+1/24/27,Payment,PAYMENT,476.01
+2/3/27,Cloudlocker Storage,SALE,2.99
+2/7/27,Pizza Orbit,SALE,24.57
+2/8/27,Booknook Online,SALE,27.88
+2/11/27,Megamart #33,SALE,116.02
+2/12/27,Streambox Monthly,SALE,15.99
+2/16/27,Threadline Apparel,SALE,78.23
+2/18/27,Megamart #33,SALE,46.35
+2/24/27,Payment,PAYMENT,231.73
+3/3/27,Cloudlocker Storage,SALE,2.99
+3/10/27,Megamart #33,SALE,42.21
+3/11/27,City Parking Garage 3,SALE,14.00
+3/12/27,Threadline Apparel,SALE,68.60
+3/12/27,Streambox Monthly,SALE,15.99
+3/17/27,Megamart #33,SALE,70.40
+3/22/27,Booknook Online Refund,RETURN,24.99
+3/24/27,Payment,PAYMENT,312.03
+3/24/27,Booknook Online,SALE,28.75
+3/25/27,Pizza Orbit,SALE,21.12
