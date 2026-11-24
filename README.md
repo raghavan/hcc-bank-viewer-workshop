@@ -31,6 +31,14 @@ and `tools/check.py` can grade it the same way.
 | 4 | Mon Mar 1 | [The viewer, and your first release](weeks/week-4/README.md) | `--week 4` |
 | 5 | Mon Mar 8 | [Open lab (optional)](weeks/week-5-open-lab/README.md) | `--week 5` |
 
+## CI and CD, done through AI
+
+Each week also adds one piece of a real delivery pipeline: tests on every push (CI) in weeks 1 to 3,
+and an automatic deploy of your viewer when you tag a release (CD) in week 4. You ask your AI agent to
+write each GitHub Actions workflow with a prompt from the week guide, then review it with a checklist.
+If Actions does not start, `python tools/ci_local.py --week N` runs the same pipeline on your computer.
+See [docs/CI_CD.md](docs/CI_CD.md).
+
 ## Quick start
 
 You need Python 3.10 or newer and git ([docs/SETUP.md](docs/SETUP.md)). Nothing else to install.
@@ -76,9 +84,9 @@ We picked the simplest tools that still make a real app:
 | `data/` | The fake bank exports (`raw/`), answer keys, a bonus bank, a sample output and the generator |
 | `starter/` | Skeletons with TODOs (Python, Java, viewer). Copy them with `tools/start_my_work.py` |
 | `my-work/` | Yours. Created when you run `start_my_work.py` |
-| `reference/` | Finished versions (Python, Java, viewer). Peek when stuck, then write your own |
-| `tools/` | `check.py` (weekly checks), `serve.py`, `show_totals.py`, `start_my_work.py`, `selftest.py` |
-| `docs/` | Setup guide, instructor notes, mockups |
+| `reference/` | Finished versions (Python, Java, viewer, CI and CD workflows). Peek when stuck, then write your own |
+| `tools/` | `check.py` (weekly checks), `ci_local.py` (the pipeline on your computer), `build_site.py`, `serve.py`, `show_totals.py`, `start_my_work.py`, `selftest.py` |
+| `docs/` | Setup guide, CI and CD guide, instructor notes, mockups |
 
 ## Using an AI coding agent?
 

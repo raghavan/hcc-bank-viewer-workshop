@@ -98,7 +98,9 @@ def main():
 
         # 6. Starters run without crashing on a fresh copy (in a scratch clone of the repo).
         clone = tmp / "clone"
-        shutil.copytree(ROOT, clone, ignore=shutil.ignore_patterns(".git", "out", "my-work", "__pycache__"))
+        shutil.copytree(ROOT, clone, ignore=shutil.ignore_patterns(".git", "out", "my-work", "_site", "__pycache__"))
+        if shutil.which("git"):
+            subprocess.run(["git", "init", "-q"], cwd=clone)  # a student's clone is a git repo
         for what in ("python", "java", "viewer", "rules"):
             run(f"start_my_work {what}", [PY, "tools/start_my_work.py", what], cwd=clone)
         run("starter python runs", [PY, "my-work/python/structure.py"], cwd=clone)
@@ -106,6 +108,28 @@ def main():
             [PY, "tools/check.py", "--week", "1"], expect_ok=False, cwd=clone)
         run("starter viewer has the three sections", [PY, "tools/check.py", "--week", "4",
                                                       "--file", str(ref)], cwd=clone)
+
+        # 6b. The CI and CD helpers.
+        run("ci_local fails on the starter (TODOs not done yet)", [PY, "tools/ci_local.py", "--week", "1"],
+            expect_ok=False, cwd=clone)
+        ref_cmd = f'"{PY}" reference/python/structure.py --out out/transactions.json'
+        for week in (1, 3):
+            run(f"ci_local week {week} passes with the reference structurer",
+                [PY, "tools/ci_local.py", "--week", str(week), "--run", ref_cmd], cwd=clone)
+        run("ci_local week 4 builds and checks the site (reference viewer)",
+            [PY, "tools/ci_local.py", "--week", "4", "--run", ref_cmd, "--viewer", "reference/viewer"], cwd=clone)
+        site = clone / "_site"
+        record((site / "index.html").exists() and (site / "transactions.json").exists() and (site / "lib.js").exists(),
+               "_site has the viewer and its transactions.json")
+        run("build_site works on the starter viewer with sample data", [PY, "tools/build_site.py", "--viewer",
+            "my-work/viewer", "--sample", "--site", str(tmp / "site2")], cwd=clone)
+        try:
+            import yaml  # optional: only used to parse the workflow files when PyYAML is around
+            for wf in [ROOT / ".github" / "workflows" / "check.yml", *sorted((ROOT / "reference" / "ci").glob("*.yml"))]:
+                data = yaml.safe_load(wf.read_text())
+                record(isinstance(data, dict) and "jobs" in data, f"{wf.relative_to(ROOT)} is valid YAML with jobs")
+        except ImportError:
+            print("skip  PyYAML not installed (workflow syntax check)")
 
         # 7. Java reference (and starter), when Java 17+ is installed.
         if shutil.which("java"):

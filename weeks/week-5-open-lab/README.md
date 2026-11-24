@@ -34,6 +34,17 @@ Same contract, same checker. Compare the two: which was easier to read?
 
 A dark mode, a chart library, a budget per category, an export to CSV, a phone friendly layout. Then cut `v1.1.0`.
 
+### F. Grow the pipeline
+
+Ask your agent for one of these, review it with the checklist in [docs/CI_CD.md](../../docs/CI_CD.md), and prove it runs:
+
+- Run your Java structurer in CI too (`actions/setup-java@v4`, Java 17).
+- A status badge for your README that shows green or red.
+- A nightly run with `schedule:`, and an explanation of when that is useful.
+- A second job that runs the week 5 bonus check only when `data/bonus/` changes.
+
+Prompt to try: *"Add X to my workflow. Show me the diff first and tell me what could go wrong."*
+
 ## What to commit
 
 Whatever you built, with a commit message that says what it does, and a new release if it is worth showing.

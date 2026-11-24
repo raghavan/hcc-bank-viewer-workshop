@@ -26,9 +26,24 @@ These instructions work for any agent or harness. Nothing here needs special too
 | Weekly check (any language) | `python tools/check.py --week N` |
 | Totals to compare against | `python tools/show_totals.py` |
 | Serve the student's viewer | `python tools/serve.py my-work/viewer --no-browser` |
+| Run the student's CI pipeline locally | `python tools/ci_local.py --week N` |
+| Build the site a deploy would publish | `python tools/build_site.py` |
 | Whole repo self test (instructor) | `python tools/selftest.py` |
 
 `tools/check.py` exits 0 when every check passes and 1 otherwise, so you can loop on it.
+
+## CI and CD (GitHub Actions)
+
+Each week guide has a pipeline step where the student asks you for a workflow. When you write one:
+
+1. Put it in `.github/workflows/` of the student's repo (`checks.yml` for CI, `deploy.yml` for CD). That folder is theirs to change.
+2. Make it run the same commands the student runs by hand, ideally `python tools/ci_local.py --week N`.
+3. Use only official `actions/*` actions pinned to a major version, `contents: read` by default, a `timeout-minutes`,
+   and the extra `pages: write` and `id-token: write` only in the deploy workflow. Add no secrets.
+4. Show the diff, then explain the file line by line in plain words, and walk the student through the
+   "What to verify yourself" list in the week guide. Do not copy `reference/ci/`; it is the answer key.
+5. Run `python tools/ci_local.py --week N` before suggesting a push. If Actions does not start on GitHub,
+   say so plainly and use the local run; do not change account or billing settings.
 
 ## The contract
 

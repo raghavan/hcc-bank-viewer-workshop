@@ -50,6 +50,26 @@ Notice the transfers (money moving between your own accounts). They make spendin
 - Write a tiny test: `assert to_cents("$1,234.56") == 123456`.
 - Harborline has its own Category column. Compare it with what you think each row is. Is the bank always right?
 
+## Pipeline step: watch CI catch a mistake (15 min)
+
+**Prompt to try:**
+
+> Update .github/workflows/checks.yml so it runs the week 2 checks instead of week 1.
+> Show me the diff before you change anything.
+
+Now break something on purpose: flip the sign in one reader, commit and push.
+
+**What to verify yourself:**
+
+- [ ] The agent changed only the week number (read the diff).
+- [ ] The broken push turns **red**, and the run log names the bank that failed.
+- [ ] After you fix it and push again, it turns green.
+
+**Check it works:** your commit list on GitHub shows one red X followed by a green check.
+No Actions? Run `python tools/ci_local.py --week 2` before and after the fix.
+
+Talk about it: why is it good that the robot is strict?
+
 ## Stuck?
 
 | You see | Try |
@@ -64,7 +84,7 @@ Still stuck? Peek at `reference/python/readers.py`.
 ## What to commit
 
 ```
-git add my-work
+git add my-work .github
 git commit -m "Week 2: read all five banks"
 git push
 ```

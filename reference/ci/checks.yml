@@ -1,0 +1,37 @@
+# Reference CI workflow for a STUDENT copy of this repo. Peek only after your agent wrote yours.
+# Lives in your repo at .github/workflows/checks.yml (not in reference/).
+#
+# What it does: on every push and pull request, a fresh Linux machine checks out your code,
+# installs Python, runs your structurer and runs the weekly checks. Red means a check failed.
+
+name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read          # this job only reads your code
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10   # a stuck run stops instead of using up minutes
+    env:
+      WEEK: "3"           # change this each week
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Java students: add actions/setup-java@v4 with distribution temurin and java-version "17".
+      - name: Run the same pipeline as tools/ci_local.py
+        run: python tools/ci_local.py --week "$WEEK"
+      - name: Keep the output so you can download it from the run page
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: transactions
+          path: out/transactions.json
+          if-no-files-found: ignore

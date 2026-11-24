@@ -65,6 +65,26 @@ Nothing in this course requires it.
 
 Talk about it: what should a program do when it is only 48% sure?
 
+## Pipeline step: CI on pull requests (20 min)
+
+Real teams never push straight to main. They open a pull request (PR), and CI runs on it before anyone merges.
+
+**Prompt to try:**
+
+> Update .github/workflows/checks.yml to run on pull requests as well as pushes to main, use week 3 checks,
+> and upload out/transactions.json as an artifact named transactions even when a step fails.
+> Then walk me through making a branch called rules, committing my rule changes, and opening a pull request.
+
+**What to verify yourself:**
+
+- [ ] `on:` lists both `push` and `pull_request`.
+- [ ] The upload step has `if: always()`, so you get the file even from a red run. Ask the agent why that matters.
+- [ ] Permissions are still read only.
+
+**Check it works:** your pull request shows the `checks` job with a green check, and the run page has a
+**transactions** artifact you can download. Merge only when it is green.
+No Actions? Run `python tools/ci_local.py --week 3`, and merge locally with `git merge rules`.
+
 ## Stuck?
 
 | You see | Try |
@@ -80,7 +100,7 @@ Still stuck? Peek at `reference/python/categorize.py` and `reference/rules.csv`.
 ## What to commit
 
 ```
-git add my-work
+git add my-work .github
 git commit -m "Week 3: categories, transfers and review queue"
 git push
 ```

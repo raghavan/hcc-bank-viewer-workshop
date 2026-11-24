@@ -15,6 +15,7 @@ By the end you will have:
 1. a viewer in `my-work/viewer/` that reads `out/transactions.json`
 2. a green `python tools/check.py --week 4`
 3. a `v1.0.0` release on GitHub
+4. a deploy pipeline (CD) that publishes your viewer when you tag a release
 
 ## Catch up lane
 
@@ -64,12 +65,48 @@ Then feed it back:
 python reference/python/structure.py --decisions decisions.json
 ```
 
-### 5. Ship it (15 min)
+### 5. Pipeline step: CD, deploy on every release (30 min)
+
+Continuous delivery: when you tag a release, a robot tests it, builds the site and publishes it. Nobody copies files by hand.
+
+First, see what will be deployed, on your own computer:
+
+```
+python tools/ci_local.py --week 4
+python tools/serve.py _site
+```
+
+`tools/build_site.py` (step 3 of that pipeline) puts your viewer and your `transactions.json` together in `_site/`.
+
+**Prompt to try:**
+
+> Create .github/workflows/deploy.yml that runs when I push a tag starting with v, and also has a manual
+> Run workflow button. It should run `python tools/ci_local.py --week 4` first, then upload the _site folder
+> with actions/upload-pages-artifact and deploy it with actions/deploy-pages. Give only the deploy the
+> permissions it needs. Explain why it needs pages write and id-token write.
+
+Then on GitHub: **Settings > Pages > Source: GitHub Actions.**
+
+**What to verify yourself:**
+
+- [ ] The trigger is tags `v*` (and `workflow_dispatch`), not every push.
+- [ ] The tests run **before** the upload. A red build must never be deployed.
+- [ ] Only `pages: write` and `id-token: write` are added, and you can say why.
+- [ ] The uploaded folder is `_site`, and it holds fake data only.
+
+**Check it works:** push your `v1.0.0` tag (step 6). The **deploy viewer** run turns green and shows a link.
+Open it: your viewer, live on the web.
+
+If Pages is not offered for a private repo, or Actions does not start, your CD still works locally:
+`python tools/ci_local.py --week 4` builds exactly what would be deployed. See [docs/CI_CD.md](../../docs/CI_CD.md).
+
+### 6. Ship it (15 min)
 
 ```
 python tools/check.py --week 4
-git add my-work
-git commit -m "Week 4: viewer"
+python tools/ci_local.py --week 4
+git add my-work .github
+git commit -m "Week 4: viewer and deploy"
 git push
 git tag v1.0.0
 git push --tags
@@ -92,6 +129,6 @@ Still stuck? Read `reference/viewer/lib.js` (the math) and `reference/viewer/app
 
 ## What to commit
 
-Your `my-work/viewer/` folder, plus the `v1.0.0` tag and a GitHub release.
+Your `my-work/viewer/` folder, `.github/workflows/deploy.yml`, the `v1.0.0` tag and a GitHub release.
 
 **Next week (optional):** open lab.

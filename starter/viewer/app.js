@@ -8,8 +8,9 @@
 
 let rows = [];
 
-// Try your own output first, then the sample file that ships with the repo.
-const SOURCES = ["/out/transactions.json", "/data/sample_output/transactions.json"];
+// Try a copy next to the page first (that is how the deployed site works, week 4 CD),
+// then your own output, then the sample file that ships with the repo.
+const SOURCES = ["transactions.json", "/out/transactions.json", "/data/sample_output/transactions.json"];
 
 async function load() {
   for (const url of SOURCES) {

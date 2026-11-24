@@ -9,6 +9,7 @@ By the end you will have:
 2. read the contract, the one page every structurer in this room agrees on
 3. a structurer that turns `data/raw/gulfview_checking.csv` into clean JSON
 4. a green `python tools/check.py --week 1`
+5. your first CI pipeline, written by your AI agent and reviewed by you
 
 > You can work in any language. The checker only reads your output file.
 > The steps below use the Python starter; a Java starter is in `starter/java/`.
@@ -76,6 +77,29 @@ python tools/check.py --week 1
 
 **Checkpoint:** `Gulfview: all 67 expected rows are there` and every field matches.
 
+## Pipeline step: your first CI (20 min)
+
+You will not type YAML by hand. You ask your AI agent, then you check its work.
+Background and words: [docs/CI_CD.md](../../docs/CI_CD.md).
+
+**Prompt to try** (paste it into your agent):
+
+> Create a GitHub Actions workflow at .github/workflows/checks.yml for this repo. On every push to main,
+> it should check out the code, set up Python 3.12, and run `python tools/ci_local.py --week 1`.
+> Give it read only permissions and a 10 minute timeout. Do not add any secrets.
+> Then explain every line to me like I am new to this.
+
+**What to verify yourself:**
+
+- [ ] The file is in `.github/workflows/` and the trigger says `push`.
+- [ ] `permissions` is `contents: read` and nothing more.
+- [ ] Every `uses:` line is from `actions/` with a version like `@v4`.
+- [ ] You can say what each step does in your own words.
+- [ ] `python tools/ci_local.py --week 1` passes on your computer first.
+
+**Check it works:** commit, push, and open the **Actions** tab on GitHub. A green check mark next to your commit means CI passed.
+If the run never starts, see "When GitHub Actions does not start" in [docs/CI_CD.md](../../docs/CI_CD.md) and use `python tools/ci_local.py --week 1` instead.
+
 ## Stuck?
 
 | You see | Try |
@@ -92,8 +116,8 @@ Still stuck? Peek at `reference/python/readers.py`, close it, and write your own
 ## What to commit
 
 ```
-git add my-work
-git commit -m "Week 1: read Gulfview"
+git add my-work .github
+git commit -m "Week 1: read Gulfview, add CI"
 git push
 ```
 

@@ -40,6 +40,7 @@ async function fetchJson(url) {
 async function loadData() {
   const asked = new URLSearchParams(location.search).get("data");
   const candidates = asked ? [asked] : [
+    "transactions.json",                 // next to the page (a deployed site, see tools/build_site.py)
     "/out/transactions.json",            // your own structurer
     "/out/reference/transactions.json",  // the Python reference
     "/data/sample_output/transactions.json", // committed sample, always there

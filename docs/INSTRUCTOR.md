@@ -63,6 +63,19 @@ python tools/selftest.py
 
 The generator is seeded (2027), so it writes the same files every time unless you change it.
 
+## CI and CD
+
+Students ask their agent for `.github/workflows/checks.yml` in weeks 1 to 3 and `deploy.yml` in week 4
+(prompts and review checklists in each week guide, background in `docs/CI_CD.md`, answers in `reference/ci/`).
+
+- This repo's own `.github/workflows/check.yml` runs `selftest.py` only in this repo, so student copies do not spend minutes on it.
+- If Actions will not start (billing notice, no minutes), `python tools/ci_local.py --week N` runs the same steps,
+  and `python tools/ci_local.py --week 4` then `python tools/serve.py _site` previews exactly what CD would deploy.
+- Pages on a private repo needs a paid plan or the GitHub Student Developer Pack, and the Pages site itself is public.
+  Fine here, since all data is fake. Decide before week 4 whether students deploy from private copies.
+- Week 4 demo: tag `v1.0.0`, watch the deploy run. A common first failure is the github-pages environment rule that
+  blocks tags; add a `v*` tag rule under Settings > Environments.
+
 ## Giving students access
 
 The repo is private. Options: add each student as a collaborator, make it a template repo so each student
