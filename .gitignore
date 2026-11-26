@@ -6,3 +6,9 @@ node_modules/
 .env
 decisions.json
 _site/
+target/
+data/private/*
+!data/private/README.md
+.idea/
+*.iml
+.vscode/

@@ -1,49 +1,57 @@
 # Week 5 (Mon Mar 8): Open lab (optional)
 
-Bring questions, finish anything from weeks 1 to 4, or pick a challenge. Each one is a good story for an interview.
+Bring questions, finish anything from weeks 1 to 4, or pick a challenge. Each one is a good
+story for an interview: "I added X, here is the test that proves it works."
 
 ```
-python tools/check.py --week 5
+./mvnw test -Dweek=5
 ```
 
 ## Challenges
 
 ### A. A sixth bank in a new format
 
-`data/bonus/tarpon_checking.json` is a JSON export, not a CSV. Dates look like `20270305` and the amounts are already signed our way.
-Add a reader for it (bank id `tarpon`, account name "Tarpon Trust Checking") and the week 5 check compares it with its own answer key.
+`data/bonus/tarpon_checking.json` is a JSON export, not a CSV. Fill in `Readers.tarpon` and the
+week 5 test compares it with its own answer key. Then try `./run structure --include-bonus`.
 
-Question: how much of your program had to change? If the answer is "one small function", your structure is good.
+Question: how much of your program had to change? If the answer is "one small method", your
+structure is good.
 
-### B. The decisions loop
+### B. A new Wrapped fact
 
-Make the review queue remember choices and download `decisions.json`. Teach your structurer to read it
-(format in `contract/CONTRACT.md`). Run it again: the queue should shrink. That loop, person corrects, program learns, is how real tools improve.
+Invent a fact nobody else has: your most expensive weekday, your longest streak without eating
+out, the month you saved the most. Write the test first, then the code, then a card for it.
+Does the grounding check still pass on every card?
 
-### C. Real AI for the leftovers
+### C. Your own data, all the way
 
-Try `--ai claude` in the reference with a key from your instructor, then add it to your own structurer.
-Rules: never let the AI decide alone (`needs_review` stays true), cache answers so you never pay twice, and keep it working with no key at all.
+If you set up your own bank in week 2, run the whole thing on it and look at your own Wrapped.
+What surprised you? Which fact would you change your habits over? (Keep it on your computer.)
 
-### D. Port it
+### D. A better story
 
-Rewrite your structurer in another language (Java starter in `starter/java/`, or anything else).
-Same contract, same checker. Compare the two: which was easier to read?
+Change the instructions Claude gets in `AiCards.java` (the `SYSTEM` text) and compare the cards
+with `--ai mock`, or with `--send` if your class has a key. What makes a card good? Count how
+many the grounding check rejects before and after.
 
 ### E. Make the viewer yours
 
-A dark mode, a chart library, a budget per category, an export to CSV, a phone friendly layout. Then cut `v1.1.0`.
+A dark mode, a budget per category, a share card for one fact, a phone friendly layout. Then cut `v1.1.0`.
 
 ### F. Grow the pipeline
 
 Ask your agent for one of these, review it with the checklist in [docs/CI_CD.md](../../docs/CI_CD.md), and prove it runs:
 
-- Run your Java structurer in CI too (`actions/setup-java@v4`, Java 17).
 - A status badge for your README that shows green or red.
 - A nightly run with `schedule:`, and an explanation of when that is useful.
-- A second job that runs the week 5 bonus check only when `data/bonus/` changes.
+- A job that runs only when `data/` changes.
 
 Prompt to try: *"Add X to my workflow. Show me the diff first and tell me what could go wrong."*
+
+### G. The Python lane
+
+Write weeks 1 and 2 again in Python (`python-lane/starter/structure.py`) and check them with
+`python python-lane/tools/check.py --week 2`. Same contract, same answers. Which was easier to read?
 
 ## What to commit
 

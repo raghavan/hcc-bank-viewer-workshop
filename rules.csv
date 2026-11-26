@@ -1,0 +1,8 @@
+rule_id,pattern,category,confidence
+I1,PAYROLL,Income,1.0
+H1,RENT,Housing,1.0
+G1,SUNFRESH MARKET,Groceries,1.0
+D1,CORNER BEAN CAFE,Dining,1.0
+U1,BAYSIDE UTILITIES,Utilities,1.0
+S1,STREAMBOX,Subscriptions,1.0
+T1,SUNCOAST FUEL,Transport,1.0

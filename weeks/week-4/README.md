@@ -1,89 +1,95 @@
-# Week 4 (Mon Mar 1): The viewer, and your first release
+# Week 4 (Mon Mar 1): Your server, CI and CD, and your first release
 
-**Goal for tonight:** a web page that shows your structured data, and a tagged release on GitHub.
+**The story:** Money Wrapped works on your computer. Tonight it becomes a real piece of
+software: your own Java web server shows it in a browser, a robot tests every change you push
+(CI), and a tagged release publishes it to the web by itself (CD), with mock data only.
 
-The viewer contract is three sections, matching the mockups in `docs/mockups/`:
+The viewer in `viewer/` is done for you. It has four screens:
 
 | id | What it shows |
 |---|---|
-| `summary` | Income, spending and net for a month, with spending by category. Stretch: a six month trend. |
-| `transactions` | The ledger, with filters (month, account, category, hide transfers, search). |
-| `review-queue` | The rows that need a person, with a way to approve or change each one. |
+| `wrapped` | The Money Wrapped cards, the facts behind them, and the cards the grounding check caught |
+| `summary` | Income, spending and net for a month, with spending by category and a six month trend |
+| `transactions` | The ledger, with filters (month, account, category, hide transfers, search) |
+| `review-queue` | The rows that need a person, with approve and change buttons |
 
-By the end you will have:
+By the end of the week you will have:
 
-1. a viewer in `my-work/viewer/` that reads `out/transactions.json`
-2. a green `python tools/check.py --week 4`
-3. a `v1.0.0` release on GitHub
-4. a deploy pipeline (CD) that publishes your viewer when you tag a release
+1. `Server.resolve`, so `./run serve` (your server, not the reference) shows the viewer
+2. a green `./mvnw test -Dweek=4`
+3. a CI workflow on week 4, and a deploy workflow (CD) that publishes on every release
+4. a `v1.0.0` release on GitHub you can show an employer
 
 ## Catch up lane
 
-Behind on weeks 1 to 3? You can still build the viewer tonight. It works on the sample file
-`data/sample_output/transactions.json`, which the starter loads when your own output is missing.
-Finish the structurer later; the viewer will pick it up.
+Behind on weeks 1 to 3? You can still do tonight. `./run --reference structure` and
+`./run --reference wrapped --ai mock` fill `out/` with the instructor's output, so your server
+and the viewer have something to show. Finish your own code later; nothing else changes.
+
+## In class (about an hour)
+
+1. **Demo (20 min).** Your instructor shows the four screens, then asks: what could go wrong
+   if a web server hands out any file someone asks for? They try `/../pom.xml` against a
+   careless server. Then they ask an agent for the deploy workflow and review it with the
+   checklist below, out loud.
+2. **Your turn (40 min).** Write `Server.resolve` and see your own server work.
 
 ## Steps
 
-### 1. Start the viewer (10 min)
+### 1. Your server (30 min)
+
+Open `Server.java`. `start` and `handle` are done. Fill in `resolve`: given a request path like
+`/app.js`, return the file that answers it, or `null` for "404 Not Found".
 
 ```
-python tools/start_my_work.py viewer
-python tools/serve.py my-work/viewer
+./mvnw test -Dweek=4
+./run serve                   # then open http://localhost:8000
 ```
 
-Your browser opens the page. Why a server? Browsers do not let a page opened straight from disk read other files.
+The server listens on `127.0.0.1` only, so nobody else on the Wi-Fi can see your money.
 
-Open the reference too, so you can see where you are heading:
-
-```
-python tools/serve.py --port 8001
-```
-
-### 2. Tabs and the ledger (40 min)
-
-`showView` is done. Fill in `renderLedger`: one table row per transaction.
-Then add the filters. Keep the browser console (F12) open.
-
-**Checkpoint:** you can find the two CORNER BEAN CAFE charges on March 25. Are they a mistake, or two coffees?
-
-### 3. Summary (40 min)
-
-Fill in `monthsIn` and `summarize`. Follow "How the viewer adds things up" in `contract/CONTRACT.md`.
-
-**Checkpoint:** your March 2027 numbers match `python tools/show_totals.py`.
-On the reference data that is income $5,421.50, spending $3,123.96 and net +$2,297.54.
-
-### 4. Review queue (30 min)
-
-Fill in `renderReview`: a card per row that needs review, with its suggestion and confidence.
-
-Stretch: approve and change buttons that save to `localStorage`, plus a "Download decisions.json" button.
-Then feed it back:
-
-```
-python reference/python/structure.py --decisions decisions.json
-```
-
-### 5. Pipeline step: CD, deploy on every release (30 min)
-
-Continuous delivery: when you tag a release, a robot tests it, builds the site and publishes it. Nobody copies files by hand.
-
-First, see what will be deployed, on your own computer:
-
-```
-python tools/ci_local.py --week 4
-python tools/serve.py _site
-```
-
-`tools/build_site.py` (step 3 of that pipeline) puts your viewer and your `transactions.json` together in `_site/`.
+**Checkpoint:** `theServerNeverServesFilesOutsideTheViewer` passes. Ask yourself why
+`/../pom.xml` is dangerous, and what your code does to stop it.
 
 **Prompt to try:**
 
-> Create .github/workflows/deploy.yml that runs when I push a tag starting with v, and also has a manual
-> Run workflow button. It should run `python tools/ci_local.py --week 4` first, then upload the _site folder
-> with actions/upload-pages-artifact and deploy it with actions/deploy-pages. Give only the deploy the
-> permissions it needs. Explain why it needs pages write and id-token write.
+> Explain path traversal to me with the /../pom.xml example in Week4Test. Then review my
+> Server.resolve and tell me if there is any request path that still escapes the viewer folder.
+> Do not rewrite it; point at the line.
+
+### 2. Look around your own app (10 min)
+
+Open each screen. On the Summary screen, March 2027 should show income $5,421.50, spending
+$3,123.96 and net +$2,297.54 on the mock data. Find the two CORNER BEAN CAFE charges on
+March 25 in the ledger: a mistake, or two coffees?
+
+### 3. Pipeline step: CI on week 4 (5 min)
+
+Move your `checks.yml` to `-Dweek=4`, push, and check the Actions tab.
+
+### 4. Pipeline step: CD, deploy on every release (30 min)
+
+Continuous delivery: when you tag a release, a robot tests it, builds the site and publishes
+it. Nobody copies files by hand. First see what would be published, on your own computer:
+
+```
+./run structure
+./run wrapped --ai mock
+./run site                    # makes _site/: the viewer and the two JSON files
+```
+
+`./run site` **refuses** to publish anything that did not come from the mock data. Try it after
+`./run structure --data private` if you set up your own bank in week 2: it stops. Your own
+money never goes on a website.
+
+**Prompt to try:**
+
+> Create .github/workflows/deploy.yml that runs when I push a tag starting with v, and also has
+> a manual Run workflow button. It should set up Java 21 (temurin, maven cache), run
+> `./mvnw -B test -Dweek=4` first, then `./run structure`, `./run wrapped --ai mock` and
+> `./run site`, then upload the _site folder with actions/upload-pages-artifact and deploy it
+> with actions/deploy-pages. Give only the deploy the permissions it needs, and explain why it
+> needs pages write and id-token write.
 
 Then on GitHub: **Settings > Pages > Source: GitHub Actions.**
 
@@ -91,44 +97,47 @@ Then on GitHub: **Settings > Pages > Source: GitHub Actions.**
 
 - [ ] The trigger is tags `v*` (and `workflow_dispatch`), not every push.
 - [ ] The tests run **before** the upload. A red build must never be deployed.
+- [ ] It runs `./run structure` with no `--data private`, so only mock data is published.
 - [ ] Only `pages: write` and `id-token: write` are added, and you can say why.
-- [ ] The uploaded folder is `_site`, and it holds fake data only.
+- [ ] It uses `--ai mock`, so the deploy needs no key and costs nothing.
 
-**Check it works:** push your `v1.0.0` tag (step 6). The **deploy viewer** run turns green and shows a link.
-Open it: your viewer, live on the web.
+**Check it works:** push your `v1.0.0` tag (step 5). The deploy run turns green and shows a
+link. Open it: your Money Wrapped, live on the web.
 
-If Pages is not offered for a private repo, or Actions does not start, your CD still works locally:
-`python tools/ci_local.py --week 4` builds exactly what would be deployed. See [docs/CI_CD.md](../../docs/CI_CD.md).
+If Pages is not offered for a private repo, or Actions does not start, your CD still works
+locally: `./run site` builds exactly what would be deployed. See [docs/CI_CD.md](../../docs/CI_CD.md).
 
-### 6. Ship it (15 min)
+### 5. Ship it (15 min)
 
 ```
-python tools/check.py --week 4
-python tools/ci_local.py --week 4
-git add my-work .github
-git commit -m "Week 4: viewer and deploy"
+./mvnw test -Dweek=4
+git status                    # nothing from data/private/ listed
+git add src rules.csv .github
+git commit -m "Week 4: server, CI and CD"
 git push
 git tag v1.0.0
 git push --tags
 ```
 
-On GitHub, open **Releases**, choose **Draft a new release**, pick the `v1.0.0` tag, write two sentences about
-what it does, and publish. Add a screenshot of your viewer. That release is something you can show an employer.
+On GitHub, open **Releases**, choose **Draft a new release**, pick the `v1.0.0` tag, write two
+sentences about what it does, and publish. Add a screenshot of your Wrapped screen. That
+release is something you can show an employer.
 
 ## Stuck?
 
 | You see | Try |
 |---|---|
-| Blank page | Open the console (F12). The first red error usually names the line. |
-| `Failed to fetch` | Start the page with `tools/serve.py`, not by double clicking the file. |
-| Totals too high | Did you skip transfers? |
-| Money shows like `165000` | Use `money(cents)`, already in `app.js`. |
-| Check says no `#summary` section | Keep the three section ids from the starter. |
+| `Not found. Did you run ./run structure ...` | Run `./run structure` and `./run wrapped` first, so `out/` has both files. |
+| Port 8000 is busy | `./run serve --port 8001` |
+| Blank page | Open the browser console (F12). The first red error usually names the line. |
+| The Wrapped tab says "No wrapped.json yet" | Run `./run wrapped --ai mock`, then reload. |
+| `Refusing to publish` | That is the safety check. Run `./run structure` (mock data) first. |
+| The deploy is red at the test step | Good: CD refused to ship a broken build. Fix the test, then tag `v1.0.1`. |
 
-Still stuck? Read `reference/viewer/lib.js` (the math) and `reference/viewer/app.js` (the page).
+Still stuck? Peek at `reference/java/src/main/java/moneywrapped/Server.java` and `reference/ci/`.
 
 ## What to commit
 
-Your `my-work/viewer/` folder, `.github/workflows/deploy.yml`, the `v1.0.0` tag and a GitHub release.
+Your code, `.github/workflows/checks.yml` and `deploy.yml`, the `v1.0.0` tag and a GitHub release.
 
 **Next week (optional):** open lab.

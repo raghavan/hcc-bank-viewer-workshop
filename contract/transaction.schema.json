@@ -9,6 +9,7 @@
     "schema_version": {"const": "1.0"},
     "generated_at": {"type": "string"},
     "generator": {"type": "string"},
+    "data_source": {"type": "string", "enum": ["mock", "private"]},
     "transactions": {
       "type": "array",
       "items": {"$ref": "#/$defs/transaction"}

@@ -13,7 +13,9 @@ Run it again any time. With the same seed you always get the same files:
     python data/generate_mock_data.py
 
 It also writes data/answer_key/answer_key.json, the truth the checks compare
-your output against, and a bonus sixth bank for the open lab night.
+your output against, data/answer_key/wrapped_key.json (the Money Wrapped facts
+for that truth, computed by data/wrapped_facts.py), and a bonus sixth bank for
+the open lab night.
 """
 
 import argparse
@@ -23,6 +25,8 @@ import datetime as dt
 import json
 import random
 from pathlib import Path
+
+from wrapped_facts import facts as wrapped_facts
 
 HERE = Path(__file__).resolve().parent
 
@@ -349,6 +353,11 @@ def main():
         "rows": answer,
     }
     (out / "answer_key" / "answer_key.json").write_text(json.dumps(key, indent=1) + "\n")
+    wrapped_key = {
+        "note": "Money Wrapped facts for the true mock rows. Your Wrapped.facts must match these exactly.",
+        "facts": wrapped_facts(answer),
+    }
+    (out / "answer_key" / "wrapped_key.json").write_text(json.dumps(wrapped_key, indent=1) + "\n")
 
     bonus_rows = write_tarpon(out / "bonus" / "tarpon_checking.json", rng)
     bonus_key = {"note": "Answer key for the bonus bank (week 5).", "rows": key_rows("tarpon", bonus_rows)}

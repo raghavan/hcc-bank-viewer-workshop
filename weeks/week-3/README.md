@@ -1,108 +1,148 @@
-# Week 3 (Mon Feb 22): Categories, transfers, and a review queue
+# Week 3 (Mon Feb 22): Money Wrapped
 
-**Goal for tonight:** give every row a category, and be honest about the ones you are not sure of.
-Rules handle the easy rows. Anything uncertain goes to a review queue for a person (week 4 builds the screen for it).
+**The story:** this is the payoff. Your program now knows where every dollar went. Tonight it
+finds the surprising things in that data and tells them as a story, like Spotify Wrapped:
 
-By the end you will have:
+> **Your coffee habit, by the numbers.** CORNER BEAN CAFE was your most visited place: 29 visits and $195.75.
 
-1. transfers between your own accounts found and marked, so they are not counted as spending
-2. a rules file and code that applies it
-3. a review queue that holds the few rows a person should look at
-4. a green `python tools/check.py --week 3`
+There is one big rule, and it is the most important idea in this workshop:
+
+**Java does the math. The AI only tells the story. And a check you write proves the AI did not
+make a number up.**
+
+An AI is great with words and sometimes invents numbers. So the facts come from your code, in
+whole cents, and every card the AI writes goes through a **grounding check** before a person sees it.
+
+By the end of the week you will have:
+
+1. `Grounding.check`, which throws out any card with a number that is not in the facts
+2. nine more facts in `Wrapped.facts`, matching the answer key
+3. `Wrapped.recurring`, which finds the charges that quietly repeat every month
+4. cards from the free fake AI, and (if your class uses it) from Claude
+5. a green `./mvnw test -Dweek=3`
+
+## In class (about an hour)
+
+1. **Demo (20 min).** Your instructor runs `./run --reference wrapped --ai mock` and opens the
+   Wrapped tab. One card says something about tacos. It is crossed out. Why? Then they run
+   `--ai claude` without `--send`, open `out/ai_request_preview.json`, and ask the room: is
+   there anything in here you would not want to send?
+2. **Your turn (40 min).** Write the grounding check and watch it catch the taco card.
 
 ## Steps
 
-### 1. Read the rules of the game (10 min)
-
-In `contract/CONTRACT.md`, read **The review rule**, **Transfers** and **Rules files**.
-
-**Checkpoint:** you can say in one sentence why a 0.6 confidence rule puts a row in the review queue.
-
-### 2. Find transfers first (40 min)
-
-Fill in `mark_transfers`. A pair is money out of one of your accounts and the same amount into another,
-within 3 days, with TRANSFER, PAYMENT or AUTOPAY in the description. Mark both rows.
-
-Why first? A card payment says PAYMENT, and you do not want a rule to call it spending.
-
-**Checkpoint:** the checker says `every transfer pair is found`. There are 24 pairs across six months.
-
-### 3. Rules (40 min)
+### 1. Look at the finished thing (5 min)
 
 ```
-python tools/start_my_work.py rules
+./run structure
+./run --reference wrapped --ai mock
+./run --reference serve        # open the Wrapped tab, then press Ctrl+C to stop
 ```
 
-That gives you `my-work/rules.csv` with seven starter rules. Fill in `load_rules` and `apply_rules`
-(the first rule whose pattern appears in the description wins), then run everything.
+Read the facts on the left and the rejected card on the right. Tonight you build the check
+that rejected it, and this week you build the facts.
 
-The checker will say the review queue is far too big. Good: now you know what to do.
-Look at the rows still waiting, find merchants that repeat, and add rules for them.
+### 2. The grounding check (30 min, in class)
 
-```
-python tools/show_totals.py
-```
-
-**Watch for the trap.** One starter rule is too broad. The checker prints a NOTE when a decided row has the wrong category.
-Find it, and fix the pattern so it only matches what it means.
-
-**Checkpoint:** accuracy at least 95% and a review queue of no more than 10% of rows (aim for about 10 rows).
-
-### 4. Optional: AI help for the leftovers (20 min)
-
-Some merchants show up once (a nursery, a yoga studio). A rule for each is silly. An AI can suggest a category,
-but a suggestion is never final: it always lands in the review queue.
-
-The reference shows both modes. Try them and compare:
+Fill in `Grounding.check`. `numbersIn` is done: it turns "$1,956.42 over 24 visits" into the
+numbers 1956.42 and 24. A card passes when it cites at least one real fact and every number in
+its title and caption is in a fact it cites. The test
+`groundingKeepsTrueCardsAndRejectsMadeUpNumbers` has seven cards to try.
 
 ```
-python reference/python/structure.py --ai mock      # a fake AI, free, no key
-python tools/check.py --week 3 --file out/reference/transactions.json
+./mvnw test -Dweek=3
+./run wrapped --ai mock
 ```
 
-`--ai claude` calls a real model. It needs `pip install anthropic` and an API key from your instructor; see `docs/INSTRUCTOR.md`.
-Nothing in this course requires it.
-
-Talk about it: what should a program do when it is only 48% sure?
-
-## Pipeline step: CI on pull requests (20 min)
-
-Real teams never push straight to main. They open a pull request (PR), and CI runs on it before anyone merges.
+The fake AI always writes one card that claims $9,999.00 on tacos. Your check catches it, and
+the viewer shows it crossed out under "Caught by the grounding check". (It writes a card for
+each fact it knows, so you get more cards as you add facts: six once all twelve are done.)
 
 **Prompt to try:**
 
-> Update .github/workflows/checks.yml to run on pull requests as well as pushes to main, use week 3 checks,
-> and upload out/transactions.json as an artifact named transactions even when a step fails.
-> Then walk me through making a branch called rules, committing my rule changes, and opening a pull request.
+> Read Grounding.java and the grounding test in Week3Test.java. Do not write check() for me.
+> Walk me through the seven test cards one by one and ask me whether each should pass and why.
 
-**What to verify yourself:**
+### 3. The facts, one at a time (at home)
 
-- [ ] `on:` lists both `push` and `pull_request`.
-- [ ] The upload step has `if: always()`, so you get the file even from a red run. Ask the agent why that matters.
-- [ ] Permissions are still read only.
+Your build has three facts so far: `period`, `money_in` and `money_out`. Read how `money_in`
+is made in `Wrapped.java`. Every other fact has the same shape. Then open
+`data/answer_key/wrapped_key.json` and read the sentence for each fact: those are the answers
+for the mock data. The rule for each one is in `contract/CONTRACT.md`, under
+**Money Wrapped facts**.
 
-**Check it works:** your pull request shows the `checks` job with a green check, and the run page has a
-**transactions** artifact you can download. Merge only when it is green.
-No Actions? Run `python tools/ci_local.py --week 3`, and merge locally with `git merge rules`.
+Add the facts in the order the TODO lists them. After each one:
+
+```
+./mvnw test -Dweek=3
+./run wrapped && ./run --reference serve
+```
+
+`everyFactMatchesTheAnswerKey` tells you which fact is next and what it should say.
+
+**Prompt to try:**
+
+> I am adding the top_merchant fact in Wrapped.java. Read its rule in contract/CONTRACT.md.
+> Do not write it for me. Ask me three questions that lead me to the right grouping, and tell
+> me which existing helper in Money.java I should use.
+
+Two facts need more thinking:
+
+- **recurring**: a merchant counts when it charges about the same amount once a month, for at
+  least 3 months. Write `recurring()` first, then the fact that uses it.
+- **quiet_subscription**: the smallest repeat charge. $2.99 does not feel like much. Times 12?
+
+### 4. Real AI, safely (20 min)
+
+```
+./run wrapped --ai claude
+```
+
+This sends **nothing**. It writes `out/ai_request_preview.json`, exactly what would go to the
+Claude API. Open it. You will find the facts, and no rows, no account names and no row ids.
+The test `theAiSeesFactsButNeverRowsOrAccounts` keeps it that way.
+
+To really call Claude you need an API key, and each call costs money, billed to whoever owns
+the key. Your instructor will tell you whether your class uses one. If it does:
+
+```
+export ANTHROPIC_API_KEY=...          # Windows PowerShell: $env:ANTHROPIC_API_KEY="..."
+./run wrapped --ai claude --send
+```
+
+Never commit a key, and never paste it into a chat with an agent. The cards come back, go
+through your grounding check, and show up on the Wrapped tab.
+
+On your own data, the same rule holds: only the facts (totals and merchant names) are sent,
+never your rows. Read the preview first, every time, and decide for yourself.
+
+## Pipeline step: CI for week 3 (5 min)
+
+Move your `checks.yml` to `-Dweek=3`. CI never calls the real AI: the tests use the fake one,
+so CI needs no key and costs nothing.
 
 ## Stuck?
 
 | You see | Try |
 |---|---|
-| `0 transfer pairs` | Print the rows whose description has TRANSFER, PAYMENT or AUTOPAY. Are the amounts opposite? |
-| Too many transfers | Each row can be in one pair only. Also check the two rows are in different accounts. |
-| Review queue too big | Add rules for merchants that appear more than twice. `show_totals` helps you spot them. |
-| Review queue is 0 | Rows nobody placed must stay `needs_review: true` with category "Other". |
-| Accuracy below 95% | Read the examples under the FAIL line. Which rule id caught them? |
+| `savings_rate is missing` | That is the next fact to add. The test prints the sentence it expects. |
+| Off by a few cents or one percent | Use `pct()` for percents and keep everything in cents until you format it. |
+| Top category is Housing | Use everyday spending (no Housing), as the contract says. |
+| Visits are too high | A refund is not a visit. Count money out rows only. |
+| recurring finds too many | One charge per month, at least 3 months, every charge within 10% of the median. |
+| A true card is rejected | Collect numbers from the fact's `text` and its `values`. |
+| `ANTHROPIC_API_KEY` errors | Without a key, use `--ai mock`. It is enough for every test. |
 
-Still stuck? Peek at `reference/python/categorize.py` and `reference/rules.csv`.
+Still stuck? Peek at `reference/java/src/main/java/moneywrapped/Wrapped.java`, close it, and write your own.
 
 ## What to commit
 
 ```
-git add my-work .github
-git commit -m "Week 3: categories, transfers and review queue"
+git add src .github
+git commit -m "Week 3: Money Wrapped facts and the grounding check"
 git push
 ```
 
-**Next week:** the viewer, and your first release.
+`out/` (with `wrapped.json` and the AI preview) is ignored by git.
+
+**Next week:** your own server, the viewer, CI and CD, and a release you can show an employer.

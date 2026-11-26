@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Money Wrapped: the Maven build.
+
+  You never need to install Maven. The wrapper (./mvnw on Mac and Linux, mvnw.cmd on
+  Windows) downloads the right version the first time you run it.
+
+    ./mvnw test -Dweek=1          run the checks for week 1 (and nothing later)
+    ./run structure               turn the bank files into out/transactions.json
+    ./run wrapped                 build your Money Wrapped facts and cards
+    ./run serve                   open the viewer at http://localhost:8000
+
+  Your code lives in src/main/java/moneywrapped. The instructor's finished build lives in
+  reference/java/src/main/java/moneywrapped and runs with -Preference, for example:
+
+    ./mvnw test -Preference -Dweek=4
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>edu.hccfl.workshop</groupId>
+  <artifactId>money-wrapped</artifactId>
+  <version>1.0.0</version>
+  <name>Money Wrapped</name>
+
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Which week's checks to run. Later weeks are skipped. Change it with -Dweek=3 -->
+    <week>1</week>
+    <!-- Which data the invariant checks read: mock (the five fake banks) or private (yours) -->
+    <data>mock</data>
+    <!-- Whose code to build: yours (starter) or the instructor's (reference, via -Preference) -->
+    <flavor>starter</flavor>
+    <app.src>src/main/java</app.src>
+
+    <anthropic.version>3.14.0</anthropic.version>
+    <jackson.version>2.19.4</jackson.version>
+    <junit.version>5.14.4</junit.version>
+  </properties>
+
+  <dependencies>
+    <!-- Reads and writes JSON -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <!-- The official Claude SDK, used only when you ask for real AI cards (see weeks/week-3) -->
+    <dependency>
+      <groupId>com.anthropic</groupId>
+      <artifactId>anthropic-java</artifactId>
+      <version>${anthropic.version}</version>
+    </dependency>
+    <!-- The weekly checks -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>${app.src}</sourceDirectory>
+    <!-- Separate output folders, so your build and the reference build never mix -->
+    <directory>${project.basedir}/target/${flavor}</directory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.2</version>
+        <configuration>
+          <systemPropertyVariables>
+            <week>${week}</week>
+            <data>${data}</data>
+            <flavor>${flavor}</flavor>
+          </systemPropertyVariables>
+          <trimStackTrace>true</trimStackTrace>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.5.0</version>
+        <configuration>
+          <mainClass>moneywrapped.Main</mainClass>
+          <cleanupDaemonThreads>false</cleanupDaemonThreads>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>reference</id>
+      <properties>
+        <flavor>reference</flavor>
+        <app.src>reference/java/src/main/java</app.src>
+      </properties>
+    </profile>
+  </profiles>
+</project>

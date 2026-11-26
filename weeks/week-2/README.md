@@ -1,92 +1,139 @@
-# Week 2 (Mon Feb 8): Five banks, one shape
+# Week 2 (Mon Feb 8): Categories, the review queue, and your own bank
 
-**Goal for tonight:** read all five bank exports into the same clean shape.
-Once every bank looks the same, the rest of the program never has to care which bank a row came from.
+**The story:** "Where did my money go?" needs categories. Rules handle the easy rows. Money
+that only moved between your own accounts is not spending at all. And anything you are not
+sure about goes to a review queue for a person, instead of being quietly guessed.
 
-By the end you will have:
+This is also the week you can point the program at **your own bank's export**, if you want to.
+It is optional, and the mock data works for everything.
 
-1. readers for Coquina, Harborline, Palmetto and Sunpine
-2. all 286 rows in `out/transactions.json`
-3. a green `python tools/check.py --week 2`
+By the end of the week you will have:
+
+1. transfers between your own accounts found and marked
+2. a rules file and the code that applies it
+3. a review queue that holds only the few rows a person should look at
+4. optionally, a profile that reads your own bank's CSV, kept off git
+5. a green `./mvnw test -Dweek=2`
+
+## In class (about an hour)
+
+1. **Demo (15 min).** Your instructor runs `./run structure` on the starter rules and shows the
+   review queue in the viewer (`./run --reference serve`, then the Review queue tab). Then they
+   point at one row that a rule got wrong and ask: which rule did that?
+2. **Your turn (45 min).** Make `markTransfers` pass, then start on the rules.
 
 ## Steps
 
-### 1. Warm up (10 min)
+### 1. Read the rules of the game (10 min)
+
+In `contract/CONTRACT.md`, read **The review rule**, **Transfers** and **Rules files**.
+
+**Checkpoint:** you can say in one sentence why a 0.6 confidence rule puts a row in the review queue.
+
+### 2. Transfers first (30 min)
+
+Fill in `markTransfers` in `Categorizer.java`. A pair is money out of one account and the same
+amount into another, within 3 days, with TRANSFER, PAYMENT or AUTOPAY in the description.
+Mark both rows.
+
+Why first? A card payment says PAYMENT, and you do not want a rule to call it spending.
+
+**Checkpoint:** `transfersArePairedLikeTheAnswerKey` passes. There are 24 pairs in six months.
+
+### 3. Rules (40 min, then at home)
+
+Fill in `loadRules` and `applyRules`. Your rules live in `rules.csv` at the top of the repo; it
+starts as a copy of `contract/starter_rules.csv`. Then:
 
 ```
-git pull
-python my-work/python/structure.py
-python tools/check.py --week 1
+./mvnw test -Dweek=2
+./run structure
+./run --reference serve        # the viewer, on YOUR output. Open the Review queue tab.
 ```
 
-Week 1 should still pass. If it does not, fix that first.
+The test `yourRulesPlaceAlmostEveryRowCorrectly` will say the review queue is far too big. Good:
+now you know what to do. Find merchants that repeat in the queue and add rules for them.
 
-### 2. One bank at a time (25 min each)
+**Watch for the trap.** One starter rule is too broad and puts rows in the wrong category. The
+test lists rows that a rule decided wrongly. Find the rule, and fix the pattern so it only
+matches what it means.
 
-Do them in this order. After each one, run your program and `python tools/check.py --week 2`.
-The checker reports each bank separately, so you can watch the list turn green.
-
-| Bank | The surprise | Question to ask yourself |
-|---|---|---|
-| Coquina Savings | `"Mar 26, 2027"` and `$300.00`, newest first | Which `strptime` code means "Mar"? Does the order of rows change the ids? |
-| Harborline Visa | A purchase is **positive** | On a card statement, whose point of view is the sign from? |
-| Palmetto Mastercard | 3 junk lines before the header; amounts are always positive | How do you skip lines before handing the file to `csv`? What does Type tell you? |
-| Sunpine Debit | lowercase, `DR`/`CR`, a time in the date, a `# end of export` line | Which part of `2026-10-05T21:54:00` do you keep? |
-
-**Checkpoint:** `no unexpected rows` and every bank shows `all expected rows are there`.
-
-### 3. Look at what you built (10 min)
-
-```
-python tools/show_totals.py
-```
-
-Every row is still "Other" because nothing is categorized yet. That is next week.
-Notice the transfers (money moving between your own accounts). They make spending look bigger than it is.
-
-### 4. Stretch
-
-- Make your program print how many rows each bank gave.
-- Write a tiny test: `assert to_cents("$1,234.56") == 123456`.
-- Harborline has its own Category column. Compare it with what you think each row is. Is the bank always right?
-
-## Pipeline step: watch CI catch a mistake (15 min)
+**Checkpoint:** at least 95% of decided rows are right, and the queue holds between 1 row and
+10% of all rows (aim for about 10).
 
 **Prompt to try:**
 
-> Update .github/workflows/checks.yml so it runs the week 2 checks instead of week 1.
-> Show me the diff before you change anything.
+> Run ./run structure and tell me which merchants appear most often among the rows that still
+> need review. Do not edit rules.csv. Suggest three rules with a pattern, a category and a
+> confidence, and tell me why each pattern will not catch anything else.
 
-Now break something on purpose: flip the sign in one reader, commit and push.
+### 4. Optional: your own bank (30 min)
 
-**What to verify yourself:**
+Most banks let you download your transactions as CSV. Every bank's file looks different, so
+instead of a new reader for each, you write `Readers.fromProfile`: one reader that follows a
+small settings file.
 
-- [ ] The agent changed only the week number (read the diff).
-- [ ] The broken push turns **red**, and the run log names the bank that failed.
-- [ ] After you fix it and push again, it turns green.
+1. Fill in `fromProfile`. Two tests use a made up bank (`data/private-example/`) to check it.
+2. Copy `data/private-example/seagrape.properties` into `data/private/` and rename it.
+3. Put your own export next to it, and change the settings to match your file's columns.
+4. Run it:
 
-**Check it works:** your commit list on GitHub shows one red X followed by a green check.
-No Actions? Run `python tools/ci_local.py --week 2` before and after the fix.
+```
+./run structure --data private
+./mvnw test -Dweek=2 -Ddata=private      # checks your rows follow the contract
+./run --reference serve
+```
 
-Talk about it: why is it good that the robot is strict?
+**Your data stays on your computer.** `data/private/` is in `.gitignore`, and
+`PrivacyTest` fails if anything in it except its README is ever committed. Two more rules:
+
+- Do not let your AI agent open your export. Anything it reads goes to its company's servers.
+  Show it only your header line, or work on the Seagrape example, which has the same problems.
+- If you are not comfortable with any of this, use the mock data. You lose nothing.
+
+When you are done, run `./run structure` (mock data again) before you commit, so your normal
+output is back to the fake bank.
+
+### 5. Stretch: decisions from the review queue
+
+In the viewer's Review queue, approve or change a few rows, then press **Download decisions.json**.
+Feed it back:
+
+```
+./run structure --decisions decisions.json
+```
+
+The queue shrinks. A person is still in charge, and the program remembers what they decided.
+
+## Pipeline step: CI that gets stricter (10 min)
+
+Change `-Dweek=1` to `-Dweek=2` in your `checks.yml` (ask your agent, then check the diff).
+Push, and watch the Actions tab. CI now protects everything you built in weeks 1 and 2.
 
 ## Stuck?
 
 | You see | Try |
 |---|---|
-| `KeyError: 'Date'` on Palmetto | The header is not the first line. Print the first 5 lines and look. |
-| Sunpine has one extra row | The last line starts with `#`. Skip comment and blank lines. |
-| Harborline amounts have the wrong sign | Flip them: a positive card charge is money out for us. |
-| Coquina ids are in the wrong order | Ids follow the row order in the file, even if the file is newest first. |
+| Transfers: wrong pairs | Sort the candidates by date, then id, before you match. Each row joins one pair at most. |
+| `category "Food" is not on the list` | Use exactly the category names in `contract/CONTRACT.md`. |
+| A rule never matches | Patterns are matched against the CLEANED description, so clean the pattern too. |
+| Too many rows in the queue | Add rules for merchants that repeat. Put specific patterns above broad ones. |
+| Queue is empty | A low confidence rule should still leave its rows for a person. |
+| `the setting date_column is missing` | Your profile needs that line. Compare it with the Seagrape example. |
+| `DateTimeParseException` on your own data | Your bank's date format differs. Look at one date and change `date_format`. |
 
-Still stuck? Peek at `reference/python/readers.py`.
+Still stuck? Peek at `reference/java/src/main/java/moneywrapped/Categorizer.java`, close it, and write your own.
 
 ## What to commit
 
 ```
-git add my-work .github
-git commit -m "Week 2: read all five banks"
+git status                     # make sure nothing from data/private/ is listed
+git add src rules.csv .github
+git commit -m "Week 2: transfers, rules and the review queue"
 git push
 ```
 
-**Next week (Feb 22, no session Feb 15):** categories, transfers and a review queue.
+Do not commit your `.properties` profile if it names your bank or account in a way you would
+rather keep private. It is ignored by git like everything else in `data/private/`.
+
+**Next week:** Money Wrapped itself. Facts, AI cards, and a check that catches AI making things up.

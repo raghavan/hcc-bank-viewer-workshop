@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Money Wrapped</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="titlebar">Money Wrapped</header>
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="household">
+        <div class="eyebrow" id="household-eyebrow">Sample household</div>
+        <div id="household-name">Rivera family (fictional)</div>
+      </div>
+      <button class="nav" data-view="wrapped">Wrapped</button>
+      <button class="nav" data-view="summary">Summary</button>
+      <button class="nav" data-view="transactions">Transactions</button>
+      <button class="nav" data-view="review-queue">Review queue <span class="badge" id="review-count">0</span></button>
+      <div class="sidebar-foot">
+        <div class="eyebrow">Data file</div>
+        <div id="data-source">not loaded</div>
+        <label class="file-pick">Load another file
+          <input type="file" id="file-input" accept=".json,application/json">
+        </label>
+      </div>
+    </nav>
+
+    <main>
+      <section id="loading" class="view">
+        <h1>Loading data</h1>
+        <p class="sub" id="loading-message">Looking for transactions.json</p>
+      </section>
+
+      <section id="wrapped" class="view" hidden>
+        <h1>Your Money Wrapped</h1>
+        <p class="sub" id="wrapped-sub">Where your money went, told as a story. Java did the math; the words may come from AI.</p>
+        <div class="wrapped-cards" id="wrapped-cards"></div>
+        <div class="two-col">
+          <div class="panel">
+            <h2>The facts behind the cards</h2>
+            <p class="sub">Computed in Java, in whole cents. Every number on a card must come from here.</p>
+            <dl class="facts" id="wrapped-facts"></dl>
+          </div>
+          <div class="panel">
+            <h2>Caught by the grounding check</h2>
+            <p class="sub">Cards with a number that no fact backs up never reach the main screen.</p>
+            <div id="wrapped-rejected"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="summary" class="view" hidden>
+        <div class="page-head">
+          <div>
+            <h1 id="summary-title">Month</h1>
+            <p class="sub">Monthly summary across all accounts. Transfers between your own accounts are excluded.</p>
+          </div>
+          <select id="month-select" aria-label="Month"></select>
+        </div>
+        <div class="cards" id="cards"></div>
+        <div class="two-col">
+          <div class="panel">
+            <h2>Spending by category</h2>
+            <div id="category-bars"></div>
+          </div>
+          <div class="panel">
+            <h2>Six month trend</h2>
+            <p class="sub">Spending by month, with income shown as a line</p>
+            <div id="trend-chart"></div>
+            <div class="legend"><span class="key bar"></span>Spending <span class="key line"></span>Income</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="transactions" class="view" hidden>
+        <h1>Transactions</h1>
+        <p class="sub">Every row shows what decided its category: a rule, the AI with your approval, or you.</p>
+        <div class="filters">
+          <select id="f-month" aria-label="Month"></select>
+          <select id="f-account" aria-label="Account"></select>
+          <select id="f-category" aria-label="Category"></select>
+          <label class="check"><input type="checkbox" id="f-hide-transfers"> Hide transfers</label>
+          <input type="search" id="f-search" placeholder="Search descriptions" aria-label="Search descriptions">
+        </div>
+        <div class="panel table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Description</th><th>Account</th><th class="num">Amount</th><th>Category</th><th>Decided by</th></tr></thead>
+            <tbody id="ledger-body"></tbody>
+          </table>
+          <p class="sub" id="ledger-count"></p>
+        </div>
+      </section>
+
+      <section id="review-queue" class="view" hidden>
+        <h1>Review queue</h1>
+        <p class="sub" id="review-sub"></p>
+        <div class="two-col review-layout">
+          <div id="review-cards"></div>
+          <div>
+            <div class="panel" id="why-panel"></div>
+            <div class="panel">
+              <h2>Your decisions</h2>
+              <p class="sub">Saved in this browser. Download them so the structurer can use them next run:
+                <code>--decisions decisions.json</code></p>
+              <div class="row-buttons">
+                <button class="btn primary" id="download-decisions">Download decisions.json</button>
+                <button class="btn" id="clear-decisions">Clear</button>
+              </div>
+              <dl class="stats" id="review-stats"></dl>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="sample-badge" id="sample-badge">Sample data: fictional banks and people</div>
+
+  <script src="lib.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

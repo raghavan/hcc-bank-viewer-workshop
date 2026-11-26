@@ -2,7 +2,8 @@
 # Lives in your repo at .github/workflows/checks.yml (not in reference/).
 #
 # What it does: on every push and pull request, a fresh Linux machine checks out your code,
-# installs Python, runs your structurer and runs the weekly checks. Red means a check failed.
+# installs Java 21 and runs the same tests you run at home. Red means a test failed.
+# It only ever sees the mock data: your own bank files are in data/private/, which git ignores.
 
 name: checks
 
@@ -19,19 +20,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10   # a stuck run stops instead of using up minutes
     env:
-      WEEK: "3"           # change this each week
+      WEEK: "4"           # change this each week
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-java@v4
         with:
-          python-version: "3.12"
-      # Java students: add actions/setup-java@v4 with distribution temurin and java-version "17".
-      - name: Run the same pipeline as tools/ci_local.py
-        run: python tools/ci_local.py --week "$WEEK"
-      - name: Keep the output so you can download it from the run page
+          distribution: temurin
+          java-version: "21"
+          cache: maven     # reuses downloaded libraries, so later runs are faster
+      - name: The weekly tests, exactly as you run them at home
+        run: ./mvnw -B test -Dweek="$WEEK"
+      - name: Keep the test report so you can download it from the run page
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: transactions
-          path: out/transactions.json
+          name: test-report
+          path: target/starter/surefire-reports
           if-no-files-found: ignore

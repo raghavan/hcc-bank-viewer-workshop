@@ -1,0 +1,208 @@
+{
+ "note": "Money Wrapped facts for the true mock rows. Your Wrapped.facts must match these exactly.",
+ "facts": [
+  {
+   "id": "period",
+   "label": "The period",
+   "text": "6 months of money, October 2026 to March 2027",
+   "values": [
+    "6",
+    "October 2026",
+    "March 2027"
+   ],
+   "data": {
+    "first_month": "2026-10",
+    "last_month": "2027-03",
+    "months": 6
+   }
+  },
+  {
+   "id": "money_in",
+   "label": "Money in",
+   "text": "Money in: $33,279.64",
+   "values": [
+    "$33,279.64"
+   ],
+   "data": {
+    "cents": 3327964
+   }
+  },
+  {
+   "id": "money_out",
+   "label": "Money out",
+   "text": "Money out, not counting transfers: $18,249.82",
+   "values": [
+    "$18,249.82"
+   ],
+   "data": {
+    "cents": 1824982
+   }
+  },
+  {
+   "id": "savings_rate",
+   "label": "Savings rate",
+   "text": "You kept 45% of what came in: $15,029.82",
+   "values": [
+    "45%",
+    "$15,029.82"
+   ],
+   "data": {
+    "pct": 45,
+    "saved_cents": 1502982
+   }
+  },
+  {
+   "id": "top_category",
+   "label": "Top everyday category",
+   "text": "Your top everyday category: Groceries, $2,535.22 (14% of money out)",
+   "values": [
+    "$2,535.22",
+    "14%"
+   ],
+   "data": {
+    "name": "Groceries",
+    "cents": 253522,
+    "pct_of_out": 14
+   }
+  },
+  {
+   "id": "top_merchant",
+   "label": "Top merchant",
+   "text": "Where most of your everyday money went: SUNFRESH MARKET, $1,956.42 over 24 visits",
+   "values": [
+    "$1,956.42",
+    "24"
+   ],
+   "data": {
+    "name": "SUNFRESH MARKET",
+    "cents": 195642,
+    "visits": 24
+   }
+  },
+  {
+   "id": "most_visited",
+   "label": "Most visited",
+   "text": "Your most visited place: CORNER BEAN CAFE, 29 visits and $195.75",
+   "values": [
+    "29",
+    "$195.75"
+   ],
+   "data": {
+    "name": "CORNER BEAN CAFE",
+    "visits": 29,
+    "cents": 19575
+   }
+  },
+  {
+   "id": "biggest_month",
+   "label": "Biggest month",
+   "text": "Your biggest spending month: December 2026, $3,264.30",
+   "values": [
+    "December 2026",
+    "$3,264.30"
+   ],
+   "data": {
+    "month": "2026-12",
+    "cents": 326430
+   }
+  },
+  {
+   "id": "weekend_share",
+   "label": "Weekend spending",
+   "text": "20% of your money out went on Saturdays and Sundays: $3,624.37",
+   "values": [
+    "20%",
+    "$3,624.37"
+   ],
+   "data": {
+    "pct": 20,
+    "cents": 362437
+   }
+  },
+  {
+   "id": "biggest_purchase",
+   "label": "Biggest single purchase",
+   "text": "Your biggest single purchase: MEGAMART #33, $116.02 on February 11, 2027",
+   "values": [
+    "$116.02",
+    "February 11, 2027"
+   ],
+   "data": {
+    "description": "MEGAMART #33",
+    "date": "2027-02-11",
+    "cents": 11602
+   }
+  },
+  {
+   "id": "recurring",
+   "label": "Repeat charges",
+   "text": "7 charges repeat every month, $1,823.96 a month in total: PALM COURT APARTMENTS RENT $1,650.00, TIDEWATER INTERNET $59.99, WAVELINE MOBILE $45.00, PEAKFIT GYM MEMBERSHIP $39.00, STREAMBOX MONTHLY $15.99, TUNEWAVE MUSIC $10.99, CLOUDLOCKER STORAGE $2.99",
+   "values": [
+    "7",
+    "$1,823.96",
+    "$1,650.00",
+    "$59.99",
+    "$45.00",
+    "$39.00",
+    "$15.99",
+    "$10.99",
+    "$2.99"
+   ],
+   "data": {
+    "count": 7,
+    "total_monthly_cents": 182396,
+    "items": [
+     {
+      "merchant": "PALM COURT APARTMENTS RENT",
+      "monthly_cents": 165000,
+      "months": 6
+     },
+     {
+      "merchant": "TIDEWATER INTERNET",
+      "monthly_cents": 5999,
+      "months": 6
+     },
+     {
+      "merchant": "WAVELINE MOBILE",
+      "monthly_cents": 4500,
+      "months": 6
+     },
+     {
+      "merchant": "PEAKFIT GYM MEMBERSHIP",
+      "monthly_cents": 3900,
+      "months": 6
+     },
+     {
+      "merchant": "STREAMBOX MONTHLY",
+      "monthly_cents": 1599,
+      "months": 6
+     },
+     {
+      "merchant": "TUNEWAVE MUSIC",
+      "monthly_cents": 1099,
+      "months": 6
+     },
+     {
+      "merchant": "CLOUDLOCKER STORAGE",
+      "monthly_cents": 299,
+      "months": 6
+     }
+    ]
+   }
+  },
+  {
+   "id": "quiet_subscription",
+   "label": "Quietest repeat charge",
+   "text": "Your smallest repeat charge: CLOUDLOCKER STORAGE at $2.99 a month, $35.88 a year",
+   "values": [
+    "$2.99",
+    "$35.88"
+   ],
+   "data": {
+    "merchant": "CLOUDLOCKER STORAGE",
+    "monthly_cents": 299,
+    "yearly_cents": 3588
+   }
+  }
+ ]
+}

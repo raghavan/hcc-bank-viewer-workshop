@@ -1,9 +1,8 @@
 # The contract
 
-This page is the one thing every student shares. You may write your structurer in
-Python, Java, JavaScript, C#, Go or anything else. As long as your program writes a file
-that follows this contract, every check in `tools/check.py` and every viewer in this repo
-can read it.
+This page is the one thing every student shares. The main track is Java, but the
+contract is about files, not code: any program that writes files that follow it can be
+checked by `python python-lane/tools/check.py` and shown by the viewer in `viewer/`.
 
 Think of it like an electrical outlet: the shape of the plug is fixed, and you can build
 any appliance behind it.
@@ -23,6 +22,15 @@ each one formats the same idea differently.
 
 The same table lives in `contract/accounts.csv` so your code can read it.
 
+### Your own bank (week 2)
+
+Instead of the five fake banks, `./run structure --data private` reads every profile in
+`data/private/`. A profile is a small `.properties` file that says where your export is and
+which columns hold the date, the description and the money. Every setting is explained in
+`data/private-example/seagrape.properties`. Your rows get the profile's `bank_id` in their
+ids (`mybank-1`, `mybank-2`, ...) and the profile's `account_name`. Git ignores
+`data/private/`, so your files stay on your computer.
+
 ## What your structurer writes
 
 One JSON file. By default: `out/transactions.json`.
@@ -30,6 +38,7 @@ One JSON file. By default: `out/transactions.json`.
 ```json
 {
   "schema_version": "1.0",
+  "data_source": "mock",
   "transactions": [
     {
       "id": "gulfview-1",
@@ -50,6 +59,9 @@ One JSON file. By default: `out/transactions.json`.
 
 The machine readable version is `contract/transaction.schema.json`.
 
+`data_source` is `mock` for the fake banks and `private` for your own data. Tools use it
+to keep your data safe: `./run site` refuses to publish anything that is not `mock`.
+
 ### The fields, one by one
 
 | Field | Type | Rule |
@@ -59,7 +71,7 @@ The machine readable version is `contract/transaction.schema.json`.
 | `account` | text | The account name from `contract/accounts.csv`. |
 | `description` | text | Uppercase, spaces trimmed from both ends, and runs of spaces squeezed to one. `"gulf  coast grocers  "` becomes `"GULF COAST GROCERS"`. |
 | `amount_cents` | whole number | Money in **cents**, from the household's point of view. **Negative = money left the account. Positive = money came in.** `$1,650.00` paid out is `-165000`. |
-| `category` | text or `null` | One of the categories below. `null` is allowed only until week 3. |
+| `category` | text or `null` | One of the categories below. `null` is allowed only in week 1. |
 | `category_source` | text | Who decided the category: `rule`, `transfer`, `ai`, `ai_approved`, `manual` or `none`. |
 | `rule_id` | text or `null` | Which rule matched, when `category_source` is `rule` or `transfer`. |
 | `confidence` | number or `null` | From 0 to 1. Rules usually say 1.0. Broad rules and AI guesses say less. |
@@ -110,7 +122,7 @@ Every viewer must get the same numbers, so the math is part of the contract.
 To see the numbers your viewer should show, run:
 
 ```
-python tools/show_totals.py out/transactions.json
+python python-lane/tools/show_totals.py out/transactions.json
 ```
 
 ## Rules files
@@ -129,9 +141,58 @@ A rule matches when its `pattern` appears anywhere inside the cleaned descriptio
 - `contract/starter_rules.csv`: a small set to start from.
 - `reference/rules.csv`: the full set the reference build uses.
 
-## Decisions file (optional, week 4)
+## Money Wrapped facts (week 3)
 
-The reference viewer's review queue can save your choices as `decisions.json`. A
+`./run wrapped` reads `out/transactions.json` and writes `out/wrapped.json`: a list of
+facts, then cards that tell the story. Java computes every fact in whole cents. The
+expected facts for the mock data are in `data/answer_key/wrapped_key.json`.
+
+Words used below:
+
+- **Spending rows**: rows that are not transfers and not `Income`. Refunds count, and lower spending.
+- **Everyday spending**: spending rows without `Housing`, so rent does not win every time.
+- **Merchant**: the description without trailing words that hold a digit or start with `#`,
+  then without a trailing `REFUND`. `SUNFRESH MARKET #214` and `SUNFRESH MARKET #88` are both `SUNFRESH MARKET`.
+- **Percent**: a whole number, rounded half up, computed with whole numbers only:
+  `pct(num, den) = floor((200 * num + den) / (2 * den))`.
+- **Ties** go to the name that comes first in alphabetical order, unless a fact says otherwise.
+
+| Fact id | What it is |
+|---|---|
+| `period` | How many months the data covers, first month to last month. |
+| `money_in` | The sum of `Income` rows. |
+| `money_out` | Minus the sum of spending rows. |
+| `savings_rate` | `money_in - money_out` as a percent of `money_in`, and the amount kept. |
+| `top_category` | The category with the most everyday spending, its amount, and its percent of `money_out`. |
+| `top_merchant` | The merchant with the most everyday spending, its amount, and its visits (money out rows). |
+| `most_visited` | The merchant with the most visits. Ties: more money first, then the name. |
+| `biggest_month` | The month with the most spending, rent included. Ties: the earlier month. |
+| `weekend_share` | Spending on Saturdays and Sundays, and its percent of `money_out`. |
+| `biggest_purchase` | The single money out row with the largest amount, not `Housing` and not `Utilities`. Ties: the earlier date, then the id. |
+| `recurring` | Merchants with money out rows in at least 3 different months, exactly one charge in each of those months, and every charge within 10% of the median charge (for an even count, the lower middle one). The monthly amount is that median. Biggest first, then by name. |
+| `quiet_subscription` | The smallest `recurring` charge, and 12 times it for a year. |
+
+Each fact has an `id`, a `label`, a `text` sentence with the numbers in it, a list of
+`values` (the numbers as a person reads them, like `$1,956.42` or `45%`) and `data` (the
+same numbers in cents, for code).
+
+### Cards and the grounding check
+
+A card has a `title`, a `caption` and `fact_ids`: the facts it is built on. Cards can come
+from a template (`--ai off`), a free fake AI (`--ai mock`) or Claude (`--ai claude`).
+
+A card is **grounded** when it cites at least one fact, every cited fact exists, and every
+number in its title and caption (money, percents and counts) appears in the text or the
+values of a fact it cites. `$1,650` and `$1,650.00` are the same number. Cards that are not
+grounded go to `rejected` with a `reason`, and the viewer shows them crossed out.
+
+Only facts go to an AI: their `id`, `label`, `text` and `values`. Never rows, account names
+or row ids. `--ai claude` writes exactly what it would send to `out/ai_request_preview.json`
+and sends nothing until you add `--send`.
+
+## Decisions file (optional, week 2)
+
+The viewer's review queue can save your choices as `decisions.json`. A
 structurer that supports it reads that file on the next run:
 
 ```json

@@ -1,0 +1,14 @@
+#!/bin/sh
+# Run a Money Wrapped command with your code:
+#   ./run structure
+#   ./run wrapped --ai mock
+#   ./run serve
+# Run the instructor's finished build instead by putting --reference first:
+#   ./run --reference structure
+cd "$(dirname "$0")" || exit 1
+PROFILE=""
+if [ "$1" = "--reference" ]; then
+  PROFILE="-Preference"
+  shift
+fi
+exec ./mvnw -q $PROFILE compile exec:java -Dexec.args="$*"
